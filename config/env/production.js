@@ -24,7 +24,7 @@ module.exports = {
         * for connect to a replicaset, rename server:{...} to replset:{...}
       server: {
         ssl: true,
-        sslValidate: false,
+        sslValidate: false, 
         checkServerIdentity: false,
         sslCA: fs.readFileSync('./config/sslcerts/ssl-ca.pem'),
         sslCert: fs.readFileSync('./config/sslcerts/ssl-cert.pem'),
