@@ -197,6 +197,9 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
         return done(new Error('User is already connected using this provider'), user, info);
       }
 
+      // Update the access token every time
+      user.profileData.accessToken = providerUserProfile.providerData.accessToken; 
+
       // Add the provider data to the additional provider data field
       if (!user.additionalProvidersData) {
         user.additionalProvidersData = {};

@@ -13,8 +13,13 @@
     "angular-ui-notification": "~0.2.0",
     "angular-ui-router": "~0.2.18",
     "bootstrap": "~3.3.6",
-    "ng-file-upload": "~12.1.0",
-    "owasp-password-strength-test": "~1.3.0"
+    "ng-file-upload": "~12.2.13",
+    "owasp-password-strength-test": "~1.3.0",
+    "moment": "~2.18.1",
+    "tether": "~1.4.0",
+    "font-awesome": "~4.7.0",
+    "angular-i18n": "~1.6.5",
+    "moment-picker": "~0.10.1"
   },
   "overrides": {
     "bootstrap": {

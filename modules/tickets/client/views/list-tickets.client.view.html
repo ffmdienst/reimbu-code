@@ -1,0 +1,123 @@
+<section>
+  <div class="page-header">
+    <h1>Tickets</h1>
+    <style>
+      html                    { overflow-y:scroll; }
+      body                    { padding-top:50px; }
+      #ticket-list              { margin-bottom:30px; }
+      .thead-inverse th {
+        color: #fff;
+        background-color: #292b2c;
+      }
+      .img-fluid {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .img-thumbnail {
+        padding: 0.25rem;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+        -webkit-transition: all 0.2s ease-in-out;
+        -o-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        min-width: 30px;
+        height: auto;
+      }
+    </style>
+  </div>
+  <div class="container">
+
+    <h4>Today's date: {{ today | date}}</h4>
+
+    <form name="myForm">
+      <table class="table table-condensed table-hover">
+        <thead>
+          <th>
+            <div class="input-group input-group-sm"><input name="name" type="text" required class="form-control" placeholder="Name" ng-model="formData.name"></div>
+          </th>
+          <th>
+            <div class="input-group input-group-sm"><input name="location" type="text" required class="form-control" placeholder="Location" ng-model="formData.location"></div>
+          </th>
+          <th>
+            <div class="input-group input-group-sm"><input name="date" required readonly="readonly" class="form-control" placeholder="Date" ng-model="formData.date"
+              moment-picker="ctrl.dummy" locale="de" start-view="month" format="DD.MM.YYYY ddd"></div>
+          </th>
+          <th>
+            <div class="input-group input-group-sm"><input name="price" required type="number" class="form-control" placeholder="Price" ng-model="formData.price" lang="de-DE"></div>
+          </th>
+          <th>
+            <div class="input-group input-group-sm"><input name="reimbursed" required type="number" class="form-control" placeholder="Reimbursed" ng-model="formData.reimbursed" lang="de-DE"></div>
+          </th>
+          <th>
+            <div class="input-group input-group-sm">
+              <input id="pickPic" name="picture" required type="file" ng-show="false" ngf-select="cacheImage($file)" ng-model="picFile" ngf-accept="'image/png,image/jpeg'" ngf-capture="'camera'">
+              <button id="picButton" type="button" ng-show="progress !== 2" class="btn btn-primary btn-sm" ng-click="pictureUI()" title="A ticket photo is required."><i ng-class="picFile !== null ? 'fa fa-spinner fa-spin' : 'fa fa-camera'" aria-hidden="true"></i></button>
+              <img class="img-thumbnail" ng-show="progress === 2" ng-src="{{formData.thumbUrl}}" width="50" >
+            </div>
+          </th>
+          <th style="min-width: 90px">
+            <div class="btn-toolbar" role="toolbar">
+              <div class="btn-group btn-group-sm" role="group">
+                <button type="reset" class="btn btn-primary btn-sm" ng-click="formData = {}; picFile = null;"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <button type="submit" class="btn btn-primary btn-sm" ng-click="createTicket()" 
+                ng-disabled="myForm.user.$invalid || myForm.location.$invalid || myForm.date.$invalid || myForm.price.$invalid || myForm.reimbursed.$invalid  || myForm.picture.$invalid || progress !== 2"><i class="fa fa-check" aria-hidden="true"></i></button>
+              </div>              
+            </div>
+          </th>
+        </thead>
+        <tr ng-repeat="ticket in resultValue=(tickets | filter:{name:formData.name, location:formData.location} | matchDate:{createdAt:today})">
+          <td>{{ticket.name}}</td>
+          <td>{{ticket.location}}</td>
+          <td>{{ticket.date | date}}</td>
+          <td>{{ticket.price | currency}}</td>
+          <td>{{ticket.reimbursed | currency}}</td>
+          <td><img class="img-thumbnail" ng-src="{{ticket.thumbUrl}}" width="50" data-toggle="modal" data-target="#imageModal" ng-click="updateModal(ticket.imageUrl)"/></td>
+          <td><button type="button" class="btn btn-primary btn-sm" ng-click="deleteTicket(ticket._id)"><i class="fa fa-trash-o" aria-hidden="true"></i></button></td>
+        </tr>
+        <tr>
+          <td/>
+          <td/>
+          <td/>
+          <td>Payout:</td>
+          <td>{{resultValue | sumOfValue:'reimbursed' | currency}}</td>
+          <td/>
+          <td/>
+        </tr>
+        <tr class="h4 bg-info">
+            <td colspan="7">Reimbursement History</td>
+        </tr>
+        <tr class="th thead-inverse">
+          <td>Name</td>
+          <td>Location</td>
+          <td>Date</td>
+          <td>Price</td>
+          <td>Reimbursed</td>
+          <td/>
+          <td/>
+        </tr>
+        <tr ng-repeat="ticket in tickets | filter:{name:formData.name, location:formData.location} | dateFilter:{date:formData.date} | excludeDate:{createdAt:today} | orderBy:'-date'">
+          <td>{{ticket.name}}</td>
+          <td>{{ticket.location}}</td>
+          <td>{{ticket.date | date}}</td>
+          <td>{{ticket.price | currency}}</td>
+          <td>{{ticket.reimbursed | currency}}</td>
+          <td><img class="img-thumbnail" ng-src="{{ticket.thumbUrl}}" width="50" data-toggle="modal" data-target="#imageModal" ng-click="updateModal(ticket.imageUrl)"/></td>
+          <td/>
+        </tr>
+      </table>
+    </form>
+    <div class="modal" id="imageModal" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <img class="img-fluid" ng-src="{{modalUrl}}"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
